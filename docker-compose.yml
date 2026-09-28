@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: pgvector/pgvector:pg17
+    image: pgvector/pgvector:pg17-trixie
     container_name: postgres_rag
     environment:
       POSTGRES_USER: postgres
@@ -18,15 +18,15 @@ services:
     restart: unless-stopped
 
   bootstrap_vector_ext:
-    image: pgvector/pgvector:pg17
+    image: pgvector/pgvector:pg17-trixie
     depends_on:
       postgres:
         condition: service_healthy
     entrypoint: ["/bin/sh", "-c"]
-    command: >
-      PGPASSWORD=postgres
-      psql "postgresql://postgres@postgres:5432/rag" -v ON_ERROR_STOP=1
-      -c "CREATE EXTENSION IF NOT EXISTS vector;"
+    command:
+      - >-
+        PGPASSWORD=postgres psql "postgresql://postgres@postgres:5432/rag"
+        -v ON_ERROR_STOP=1 -c "CREATE EXTENSION IF NOT EXISTS vector;"
     restart: "no"
 
 volumes:
